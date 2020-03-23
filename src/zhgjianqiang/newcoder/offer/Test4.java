@@ -19,6 +19,13 @@ public class Test4 {
         return root;
     }
 
+    /*
+    因为是树的结构，一般都是用递归来实现。
+    用数学归纳法的思想就是，假设最后一步，就是root的左右子树都已经重建好了，那么我只要考虑将root的左右子树安上去即可。
+    根据前序遍历的性质，第一个元素必然就是root，那么下面的工作就是如何确定root的左右子树的范围。
+    根据中序遍历的性质，root元素前面都是root的左子树，后面都是root的右子树。那么我们只要找到中序遍历中root的位置，就可以确定好左右子树的范围。
+    正如上面所说，只需要将确定的左右子树安到root上即可。递归要注意出口，假设最后只有一个元素了，那么就要返回。
+    */
     //前序遍历{1,2,4,7,3,5,6,8}和中序遍历序列{4,7,2,1,5,3,8,6}
     private TreeNode reConstructBinaryTree(int[] pre, int startPre, int endPre, int[] in, int startIn, int endIn) {
 
@@ -29,8 +36,11 @@ public class Test4 {
 
         for (int i = startIn; i <= endIn; i++) {
             if (in[i] == pre[startPre]) {
+                //i为中序遍历下的root元素，故in这里是startIn到i-1；
+                //同时该root元素下左子树的元素个数为i-startIn，pre第一个为root，故pre这里是startPre+1到startPre+(i-startIn)
                 root.left = reConstructBinaryTree(pre, startPre + 1, startPre + i - startIn, in, startIn, i - 1);
-                root.right = reConstructBinaryTree(pre, i - startIn + startPre + 1, endPre, in, i + 1, endIn);
+                //pre右子树起始比左子树最后一个元素的index结尾多1，结尾为最大值endPre；in这里简单的i+1即可
+                root.right = reConstructBinaryTree(pre, startPre + i - startIn + 1, endPre, in, i + 1, endIn);
                 break;
             }
         }
